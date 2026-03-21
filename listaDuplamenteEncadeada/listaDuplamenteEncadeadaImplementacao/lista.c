@@ -85,7 +85,7 @@ int adicionarApos(Lista *lista, int valor, int elemento)
         if (novoNo != NULL)
         {
             novoNo->valor = valor;
-            while (noProcurado != NULL && noProcurado != elemento)
+            while (noProcurado != NULL && noProcurado->valor != elemento)
             {
                 noProcurado = noProcurado->proximo;
             }
