@@ -1,11 +1,12 @@
 #include "lista.h"
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 typedef struct no
 {
-    int valor;
     struct no *anterior, *proximo;
+    Carro *valor;
 } No;
 
 struct lista
@@ -18,84 +19,88 @@ Lista *criarLista()
     Lista *lista = (Lista *)malloc(sizeof(Lista));
     if (lista != NULL)
     {
-        lista->inicio = NULL;
         lista->fim = NULL;
+        lista->inicio = NULL;
     }
     return lista;
 }
 
-int adicionarInicio(Lista *lista, int valor)
+int adicionarFim(Lista *lista, Carro *carro)
 {
-    if (lista != NULL)
+    if (lista != NULL && carro != NULL)
     {
         No *novoNo = (No *)malloc(sizeof(No));
         if (novoNo != NULL)
         {
-            novoNo->valor = valor;
-            if (lista->inicio != NULL)
-            {
-                novoNo->proximo = lista->inicio;
-                novoNo->proximo->anterior = novoNo;
-            }
-            else
-            {
-                novoNo->proximo = NULL;
-                lista->fim = novoNo;
-            }
-            lista->inicio = novoNo;
-            novoNo->anterior = NULL;
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int adicionarFim(Lista *lista, int valor)
-{
-    if (lista != NULL)
-    {
-        No *novoNo = (No *)malloc(sizeof(No));
-        if (novoNo != NULL)
-        {
-            novoNo->valor = valor;
-            if (lista->fim != NULL)
-            {
-                novoNo->anterior = lista->fim;
-                lista->fim->proximo = novoNo;
-            }
-            else
+            novoNo->valor = carro;
+            novoNo->proximo = NULL;
+            if (lista->fim == NULL)
             {
                 lista->inicio = novoNo;
                 novoNo->anterior = NULL;
             }
+            else
+            {
+                novoNo->anterior = lista->fim;
+                lista->fim->proximo = novoNo;
+            }
             lista->fim = novoNo;
-            novoNo->proximo = NULL;
             return 1;
         }
     }
     return 0;
 }
 
-int adicionarApos(Lista *lista, int valor, int elemento)
+int adicionarInicio(Lista *lista, Carro *carro)
 {
-    if (lista != NULL && lista->inicio != NULL)
+    if (lista != NULL && carro != NULL)
     {
-        No *noProcurado = lista->inicio;
-
-        while (noProcurado != NULL && noProcurado->valor != elemento)
+        No *novoNo = (No *)malloc(sizeof(No));
+        if (novoNo != NULL)
         {
-            noProcurado = noProcurado->proximo;
+            novoNo->anterior = NULL;
+            novoNo->valor = carro;
+            if (lista->inicio == NULL)
+            {
+                novoNo->proximo = NULL;
+                lista->fim = novoNo;
+            }
+            else
+            {
+                novoNo->proximo = lista->inicio;
+                novoNo->proximo->anterior = novoNo;
+            }
+            lista->inicio = novoNo;
+            return 1;
         }
+    }
+    return 0;
+}
 
-        if (noProcurado != NULL)
+int adicionarApos(Lista *lista, Carro *carro, char *placaProcurada)
+{
+    if (lista != NULL && carro != NULL && strlen(placaProcurada) == 7 && lista->inicio != NULL)
+    {
+        No *buscador = lista->inicio;
+        char placa[8];
+        while (buscador != NULL)
+        {
+            getPlaca(buscador->valor, placa);
+            if (strcmp(placa, placaProcurada) == 0)
+            {
+                break;
+            }
+            buscador = buscador->proximo;
+        }
+        if (buscador != NULL)
         {
             No *novoNo = (No *)malloc(sizeof(No));
             if (novoNo != NULL)
             {
-                novoNo->valor = valor;
-                novoNo->proximo = noProcurado->proximo;
-                novoNo->anterior = noProcurado;
-                noProcurado->proximo = novoNo;
+                novoNo->valor = carro;
+                novoNo->proximo = buscador->proximo;
+                novoNo->anterior = buscador;
+                buscador->proximo = novoNo;
                 if (novoNo->proximo == NULL)
                 {
                     lista->fim = novoNo;
@@ -111,14 +116,16 @@ int adicionarApos(Lista *lista, int valor, int elemento)
     return 0;
 }
 
-int remover(Lista *lista, int valor)
+int remover(Lista *lista, char *placaBuscada)
 {
-    if (lista != NULL && lista->inicio != NULL)
+    if (lista != NULL && strlen(placaBuscada) == 7 && lista->inicio != NULL)
     {
         No *buscador = lista->inicio;
+        char placa[8];
         while (buscador != NULL)
         {
-            if (buscador->valor == valor)
+            getPlaca(buscador->valor, placa);
+            if (strcmp(placa, placaBuscada) == 0)
                 break;
             buscador = buscador->proximo;
         }
@@ -128,7 +135,7 @@ int remover(Lista *lista, int valor)
             {
                 lista->inicio = buscador->proximo;
                 if (buscador->proximo == NULL)
-                    lista->fim = buscador->proximo;
+                    lista->fim = NULL;
                 else
                     lista->inicio->anterior = NULL;
             }
@@ -142,6 +149,7 @@ int remover(Lista *lista, int valor)
                 buscador->anterior->proximo = buscador->proximo;
                 buscador->proximo->anterior = buscador->anterior;
             }
+            freeCarro(buscador->valor);
             free(buscador);
             return 1;
         }
@@ -149,44 +157,33 @@ int remover(Lista *lista, int valor)
     return 0;
 }
 
-void mostrarListaDoInicioAoFim(Lista *lista)
+void exibirLista(Lista *lista)
 {
     if (lista != NULL && lista->inicio != NULL)
     {
         No *exibe = lista->inicio;
+        char placa[8];
         while (exibe != NULL)
         {
-            printf("%d \n", exibe->valor);
+            getPlaca(exibe->valor, placa);
+            printf("%s\n", placa);
             exibe = exibe->proximo;
         }
     }
 }
-
-void mostrarListaDoFimAoInicio(Lista *lista)
-{
-    if (lista != NULL && lista->fim != NULL)
-    {
-        No *exibe = lista->fim;
-        while (exibe != NULL)
-        {
-            printf("%d \n", exibe->valor);
-            exibe = exibe->anterior;
-        }
-    }
-}
-
 void freeLista(Lista *lista)
 {
     if (lista != NULL)
     {
         if (lista->inicio != NULL)
         {
-            No *freeNo = NULL, *no = lista->inicio;
-            while (no != NULL)
+            No *carro = lista->inicio, *carroFree = NULL;
+            while (carro != NULL)
             {
-                freeNo = no;
-                no = no->proximo;
-                free(freeNo);
+                carroFree = carro;
+                carro = carro->proximo;
+                freeCarro(carroFree->valor);
+                free(carroFree);
             }
         }
         free(lista);
