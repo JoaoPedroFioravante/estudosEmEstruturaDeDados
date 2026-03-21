@@ -1,5 +1,5 @@
 typedef struct carro Carro;
 
 Carro * criarCarro(char*marca, char*placa, int ano);
-char* getPlacaCarro(Carro*carro);
+void getPlacaCarro(Carro*carro, char*placa);
 void freeCarro(Carro * carro);

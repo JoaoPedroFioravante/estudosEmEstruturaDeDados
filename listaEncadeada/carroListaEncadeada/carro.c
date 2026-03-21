@@ -20,10 +20,8 @@ Carro * criarCarro(char*marca, char*placa, int ano){
     return carro;
 }
 
-char* getPlacaCarro(Carro*carro){
-    char placa[8];
+void getPlacaCarro(Carro*carro, char*placa){
     strcpy(placa, carro->placa);
-    return placa;
 }
 
 void freeCarro(Carro * carro){

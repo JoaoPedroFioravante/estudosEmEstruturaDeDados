@@ -85,7 +85,19 @@ int remover(ListaEncadeada *lista, int valor)
         }
         if (auxiliar2 != NULL)
         {
-            (*auxiliar).proximo = (*auxiliar2).proximo;
+            if(lista->inicio == auxiliar2){
+                lista->inicio = auxiliar2->proximo;
+                if(auxiliar2->proximo == NULL){
+                    lista->fim = NULL;
+                }
+            }
+            else if(lista->fim == auxiliar2){
+                auxiliar->proximo = auxiliar2->proximo;
+                lista->fim = auxiliar;
+            }
+            else{
+                auxiliar->proximo = auxiliar2->proximo;
+            }
             free(auxiliar2);
             return 1;
         }

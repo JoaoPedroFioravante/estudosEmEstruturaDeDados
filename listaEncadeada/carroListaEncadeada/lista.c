@@ -81,7 +81,9 @@ int buscarPlaca(Lista *lista, char *placa, No **carro)
         No *aux = lista->inicio;
         while (aux != NULL)
         {
-            if (strcmp(getPlacaCarro(aux->valor), placa) == 0)
+            char placaCarro[8];
+            getPlacaCarro(aux->valor, placaCarro);
+            if (strcmp(placaCarro, placa) == 0)
             {
                 break;
             }
@@ -122,7 +124,9 @@ int remover(Lista *lista, char *placa)
         No *aux = lista->inicio, *aux2 = NULL;
         while (aux != NULL)
         {
-            if (strcmp(getPlacaCarro(aux->valor), placa) == 0)
+            char placaCarro[8];
+            getPlacaCarro(aux->valor, placaCarro);
+            if (strcmp(placaCarro, placa) == 0)
             {
                 break;
             }
@@ -131,22 +135,37 @@ int remover(Lista *lista, char *placa)
         }
         if (aux != NULL)
         {
-            aux2->proximo = aux->proximo;
-            freeCarro(aux);
+            if(lista->inicio == aux){
+                lista->inicio = aux->proximo;
+                if(aux->proximo == NULL){
+                    lista->fim = NULL;
+                }
+            }
+            else if(lista->fim == aux){
+                aux2->proximo = aux->proximo;
+                lista->fim = aux2;
+            }
+            else{
+                aux2->proximo = aux->proximo;
+            }
+            freeCarro(aux->valor);
+            free(aux);
             return 1;
         }
     }
     return 0;
 }
 
-void mostarLista(Lista *lista)
+void mostrarLista(Lista *lista)
 {
     if (lista != NULL && lista->inicio != NULL)
     {
         No *aux = lista->inicio;
         while (aux != NULL)
         {
-            printf("\n %s", getPlacaCarro(aux->valor));
+            char placa[8];
+            getPlacaCarro(aux->valor, placa);
+            printf(" %s \n", placa);
             aux = aux->proximo;
         }
     }
@@ -163,7 +182,8 @@ void freeLista(Lista *lista)
             {
                 carroFree = carro;
                 carro = carro->proximo;
-                freeCarro(carroFree);
+                freeCarro(carroFree->valor);
+                free(carroFree);
             }
         }
         free(lista);

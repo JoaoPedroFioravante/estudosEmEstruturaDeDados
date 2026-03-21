@@ -14,6 +14,9 @@ int main(){
     adicionarNoInicio(lista, 4);
     adicionarAposElemento(lista, 10, 7);
     exibirLista(lista);
+    printf("\n===========\n");
     remover(lista, 10);
+    remover(lista, 4);
+    remover(lista, 8);
     exibirLista(lista);
 }
