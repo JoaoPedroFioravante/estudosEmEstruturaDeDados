@@ -51,9 +51,9 @@ int addMonomio(Lista *lista, Mono *monomio)
     return 1;
 }
 
-int avaliarPolinomio(Lista *lista, double x)
+double avaliarPolinomio(Lista *lista, double x)
 {
-    if (lista == NULL || lista->fim == NULL)
+    if (lista == NULL || lista->inicio == NULL)
     {
         return 0;
     }
@@ -66,6 +66,21 @@ int avaliarPolinomio(Lista *lista, double x)
         polinomioAvaliado += valor;
         percorredor = percorredor->proximoNo;
     }
-    printf("\n valor do Polinomio com X = %.2f e igual a %.2f ", x, polinomioAvaliado);
-    return 1;
+    return polinomioAvaliado;
+}
+
+void freeLista(Lista*lista){
+    if(lista == NULL){
+        return;
+    }
+    No*percorredor = lista->inicio;
+    No*freePercorrido = NULL;
+    while (percorredor!=NULL)
+    {
+        freePercorrido = percorredor;
+        percorredor = percorredor->proximoNo;
+        free(freePercorrido->valor);
+        free(freePercorrido);
+    }
+    free(lista);
 }

@@ -10,6 +10,7 @@ um nó na lista é criado para armazená-lo.
 
 int main()
 {
+    double valorDoPolinomio;
     Mono *mono1 = createMonomio(3, 5);
     Mono *mono2 = createMonomio(6, 2);
     Mono *mono3 = createMonomio(1, 0);
@@ -17,7 +18,8 @@ int main()
     addMonomio(lista, mono1);
     addMonomio(lista, mono2);
     addMonomio(lista, mono3);
-    avaliarPolinomio(lista, 2);
+    valorDoPolinomio = avaliarPolinomio(lista, 2);
+    printf("\n %.2f ", valorDoPolinomio);
     printf("\n\n");
     Lista *lista2 = createLista();
     int coeficiente, literal, counter = 0;
@@ -32,5 +34,8 @@ int main()
             break;
         }
     } while (1);
-    avaliarPolinomio(lista2, 3);
+    valorDoPolinomio = avaliarPolinomio(lista2, 3);
+    printf("\n %.2f ", valorDoPolinomio);
+    freeLista(lista); 
+    freeLista(lista2);
 }
